@@ -1,0 +1,62 @@
+/* =============================================================
+   PARKVUE — 80mm Thermal Receipt Print Stylesheet
+   receipt.css
+   ============================================================= */
+
+@media print {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #fff !important; color: #000 !important; font-family: 'Courier New', monospace !important; }
+
+  /* Hide everything except the receipt block */
+  body > *:not(#receipt-printable) { display: none !important; }
+  #receipt-printable { display: block !important; }
+
+  @page {
+    size:   80mm auto;
+    margin: 4mm 3mm;
+  }
+
+  #receipt-printable {
+    width:     74mm;
+    font-size: 11px;
+    line-height: 1.5;
+    color:     #000;
+  }
+
+  .receipt-logo {
+    text-align:    center;
+    font-size:     16px;
+    font-weight:   bold;
+    margin-bottom: 2mm;
+    border-bottom: 1px dashed #000;
+    padding-bottom: 2mm;
+  }
+  .receipt-facility { text-align: center; font-size: 9px; margin-bottom: 3mm; }
+  .receipt-divider  { border-top: 1px dashed #000; margin: 2mm 0; }
+  .receipt-row      { display: flex; justify-content: space-between; font-size: 10px; }
+  .receipt-row.bold { font-weight: bold; }
+  .receipt-row.large { font-size: 14px; font-weight: bold; margin: 2mm 0; }
+  .receipt-barcode  { text-align: center; margin: 3mm 0; font-family: 'Libre Barcode 39', monospace; font-size: 28px; letter-spacing: 3px; }
+  .receipt-ticket   { text-align: center; font-size: 9px; color: #555; }
+  .receipt-footer   { text-align: center; font-size: 8px; color: #666; margin-top: 3mm; border-top: 1px dashed #000; padding-top: 2mm; }
+  .receipt-qr       { text-align: center; margin: 2mm 0; }
+}
+
+/* Receipt Preview (on-screen) */
+#receipt-printable {
+  display:   none;
+  position:  fixed;
+  top:       50%;
+  left:      50%;
+  transform: translate(-50%, -50%);
+  width:     300px;
+  background: #fff;
+  color:     #000;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding:   16px;
+  border-radius: 4px;
+  z-index:   999;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+}
+#receipt-printable.show-preview { display: block; }

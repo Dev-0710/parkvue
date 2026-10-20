@@ -1,0 +1,251 @@
+{
+  "terminal": "GATE-02-NORTH",
+  "last_updated": "2026-10-19T20:45:00Z",
+  "zones": {
+    "A": {
+      "label": "Zone A — 2-Wheeler",
+      "type": "2-wheeler",
+      "capacity": 60,
+      "occupied": 19,
+      "free": 41,
+      "color": "#00e699",
+      "bays": [
+        {
+          "id": "A-01",
+          "status": "occupied",
+          "plate": "MH12AB1234",
+          "category": "2-Wheeler",
+          "checkin": "2026-10-19T18:10:00Z",
+          "ticket": "TKT-7390",
+          "dwell": "2h 15m"
+        },
+        {
+          "id": "A-02",
+          "status": "occupied",
+          "plate": "HR26DK4004",
+          "category": "2-wheeler",
+          "checkin": "2026-10-20T07:36:37.098Z",
+          "ticket": "TKT-6152",
+          "dwell": "Just now"
+        },
+        {
+          "id": "A-03",
+          "status": "occupied",
+          "plate": "TS08GH5678",
+          "category": "2-wheeler",
+          "checkin": "2026-10-20T07:45:04.203Z",
+          "ticket": "TKT-5002",
+          "dwell": "Just now"
+        },
+        {
+          "id": "A-04",
+          "status": "occupied",
+          "plate": "KA09EF4321",
+          "category": "2-Wheeler",
+          "checkin": "2026-10-19T19:00:00Z",
+          "ticket": "TKT-7392",
+          "dwell": "1h 25m"
+        },
+        {
+          "id": "A-05",
+          "status": "free",
+          "plate": null,
+          "category": "2-Wheeler",
+          "checkin": null,
+          "ticket": null,
+          "dwell": null
+        },
+        {
+          "id": "A-06",
+          "status": "free",
+          "plate": null,
+          "category": "2-Wheeler",
+          "checkin": null,
+          "ticket": null,
+          "dwell": null
+        }
+      ]
+    },
+    "B": {
+      "label": "Zone B — Sedan & SUV",
+      "type": "sedan-suv",
+      "capacity": 120,
+      "occupied": 104,
+      "free": 16,
+      "color": "#ef4444",
+      "bays": [
+        {
+          "id": "L1-A01",
+          "status": "occupied",
+          "plate": "CA 7XYZ89",
+          "category": "Sedan",
+          "checkin": "2026-10-19T18:11:00Z",
+          "ticket": "TKT-7395",
+          "dwell": "2h 14m"
+        },
+        {
+          "id": "L1-A02",
+          "status": "occupied",
+          "plate": "NY K49-WQP",
+          "category": "SUV",
+          "checkin": "2026-10-19T15:23:00Z",
+          "ticket": "TKT-7402",
+          "dwell": "5h 02m"
+        },
+        {
+          "id": "L1-A03",
+          "status": "occupied",
+          "plate": "TS08GH5678",
+          "category": "sedan",
+          "checkin": "2026-10-20T05:55:31.181Z",
+          "ticket": "TKT-2626",
+          "dwell": "Just now"
+        },
+        {
+          "id": "L1-A04",
+          "status": "occupied",
+          "plate": "TX G82-82L",
+          "category": "Truck",
+          "checkin": "2026-10-19T19:15:00Z",
+          "ticket": "TKT-7403",
+          "dwell": "1h 10m"
+        },
+        {
+          "id": "L1-A05",
+          "status": "occupied",
+          "plate": "DL7SZ9876",
+          "category": "sedan",
+          "checkin": "2026-10-20T05:55:47.407Z",
+          "ticket": "TKT-9572",
+          "dwell": "Just now"
+        },
+        {
+          "id": "L1-A06",
+          "status": "occupied",
+          "plate": "FL 8PQ-331",
+          "category": "Sedan",
+          "checkin": "2026-10-19T16:53:00Z",
+          "ticket": "TKT-7404",
+          "dwell": "3h 32m"
+        }
+      ]
+    },
+    "C": {
+      "label": "Zone C — EV 150kW DC",
+      "type": "ev",
+      "capacity": 16,
+      "occupied": 13,
+      "free": 3,
+      "draw_kw": 924,
+      "color": "#00b4d8",
+      "bays": [
+        {
+          "id": "L2-EV01",
+          "status": "charging",
+          "plate": "WA 9EV-TES",
+          "category": "EV",
+          "checkin": "2026-10-19T17:10:00Z",
+          "ticket": "TKT-7396",
+          "kw": 72,
+          "soc": 91,
+          "dwell": "72 kW · 91% CHG"
+        },
+        {
+          "id": "L2-EV02",
+          "status": "charging",
+          "plate": "FL TYC-440",
+          "category": "EV",
+          "checkin": "2026-10-19T16:25:00Z",
+          "ticket": "TKT-7397",
+          "kw": 120,
+          "soc": 48,
+          "dwell": "120 kW · 48% CHG"
+        },
+        {
+          "id": "L2-EV03",
+          "status": "free",
+          "plate": null,
+          "category": "EV",
+          "checkin": null,
+          "ticket": null,
+          "kw": 0,
+          "soc": 100,
+          "plugged": true,
+          "auto_opt": true,
+          "dwell": "READY · Plugged: Yes, Auto-Opt"
+        },
+        {
+          "id": "L2-EV04",
+          "status": "free",
+          "plate": null,
+          "category": "EV",
+          "checkin": null,
+          "ticket": null,
+          "kw": 0,
+          "soc": 0,
+          "plugged": false,
+          "auto_opt": false,
+          "dwell": null
+        }
+      ]
+    },
+    "V": {
+      "label": "Zone V — Valet Staging",
+      "type": "valet",
+      "capacity": 25,
+      "occupied": 18,
+      "free": 7,
+      "drivers_active": 4,
+      "color": "#f59e0b",
+      "bays": [
+        {
+          "id": "L1-V01",
+          "status": "valet",
+          "plate": "KEY #308",
+          "category": "Valet",
+          "checkin": "2026-10-19T19:50:00Z",
+          "ticket": "TKT-7399",
+          "driver": "DRIVER #2",
+          "key_number": 308,
+          "dwell": "Key #308 · Driver #2"
+        },
+        {
+          "id": "L1-V02",
+          "status": "valet",
+          "plate": "KEY #12",
+          "category": "Valet",
+          "checkin": "2026-10-19T19:10:00Z",
+          "ticket": "TKT-7400",
+          "driver": "DRIVER #1",
+          "key_number": 12,
+          "dwell": "Key #12 · Driver #1"
+        },
+        {
+          "id": "L1-V03",
+          "status": "occupied",
+          "plate": "DL7SZ9876",
+          "category": "Valet",
+          "checkin": "2026-10-20T07:38:39.449Z",
+          "ticket": "TKT-2932",
+          "driver": null,
+          "key_number": null,
+          "dwell": "Just now"
+        }
+      ]
+    }
+  },
+  "barrier": {
+    "status": "armed",
+    "servo_temp_c": 38,
+    "hydraulic_psi": 41.2,
+    "loop_sensor": "energized",
+    "coil_id": "COIL-N02"
+  },
+  "lane": {
+    "id": "NORTH-INBD-02",
+    "radar_active": true,
+    "optical_feed": true,
+    "ultrasonic_height_m": 2.19,
+    "height_status": "CLEAR"
+  }
+}

@@ -8,10 +8,15 @@ function getDB(): PDO {
     static $pdo = null;
     if ($pdo !== null) return $pdo;
 
-    $host = '127.0.0.1';
-    $user = 'root';
-    $pass = '';
-    $dbname = 'parkvue_db';
+    // $host = '127.0.0.1';
+    // $user = 'root';
+    // $pass = '';
+    // $dbname = 'parkvue_db';
+    $host   = 'sql202.infinityfree.com'; 
+    $user   = 'if0_43224570';           
+    $pass   = 'ZqhKzNyI10w';
+    $dbname = 'if0_43224570_parkvue_db';
+
 
     // Connect to MySQL server and ensure database exists
     $rootPdo = new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass, [

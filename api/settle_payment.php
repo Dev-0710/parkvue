@@ -56,7 +56,8 @@ if ($found_bay) {
 
     // Update transactions & ledger
     $now_iso = gmdate('c');
-    array_unshift($ledger['recent_transactions'], [
+    if (!isset($ledger['transactions'])) $ledger['transactions'] = [];
+    array_unshift($ledger['transactions'], [
         'timestamp'  => $now_iso,
         'event_type' => 'FEE_SETTLED',
         'plate'      => $plate,
@@ -66,6 +67,7 @@ if ($found_bay) {
         'amount'     => $total_due,
         'status'     => 'COMPLETED'
     ]);
+    $ledger['recent_transactions'] = $ledger['transactions'];
 
     if (strtolower($tender_type) === 'cash') {
         $ledger['metrics']['cash_in_drawer'] = (float)($ledger['metrics']['cash_in_drawer'] ?? 0) + $total_due;

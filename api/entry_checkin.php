@@ -67,7 +67,8 @@ $bays['zones'][$zone_key]['occupied'] = min((int)$bays['zones'][$zone_key]['capa
 $bays['zones'][$zone_key]['free']     = max(0, (int)$bays['zones'][$zone_key]['capacity'] - (int)$bays['zones'][$zone_key]['occupied']);
 
 // Log in ledger
-array_unshift($ledger['recent_transactions'], [
+if (!isset($ledger['transactions'])) $ledger['transactions'] = [];
+array_unshift($ledger['transactions'], [
     'timestamp'  => $now_iso,
     'event_type' => 'ENTRY_CHECKIN',
     'plate'      => $plate,
@@ -77,6 +78,7 @@ array_unshift($ledger['recent_transactions'], [
     'amount'     => 0.00,
     'status'     => 'COMPLETED'
 ]);
+$ledger['recent_transactions'] = $ledger['transactions'];
 $ledger['metrics']['vehicles_processed'] = (int)($ledger['metrics']['vehicles_processed'] ?? 0) + 1;
 
 file_put_contents($bays_file, json_encode($bays, JSON_PRETTY_PRINT));

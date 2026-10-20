@@ -29,7 +29,7 @@ echo json_encode([
     'data'      => [
         'zones'               => $bays['zones'] ?? [],
         'metrics'             => $ledger['metrics'] ?? [],
-        'recent_transactions' => $ledger['recent_transactions'] ?? [],
+        'recent_transactions' => $ledger['transactions'] ?? $ledger['recent_transactions'] ?? [],
         'operator'            => $ledger['operator'] ?? 'Alan Vance',
         'badge'               => $ledger['badge'] ?? 'B'
     ]

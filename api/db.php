@@ -2,32 +2,39 @@
 declare(strict_types=1);
 
 /**
- * db.php — Central MySQL Database Connection & Auto-Setup
+ * db.php — Dual Environment MySQL Database Connection (Localhost & InfinityFree)
  */
 function getDB(): PDO {
     static $pdo = null;
     if ($pdo !== null) return $pdo;
 
-    // $host = '127.0.0.1';
-    // $user = 'root';
-    // $pass = '';
-    // $dbname = 'parkvue_db';
-    $host   = 'sql202.infinityfree.com'; 
-    $user   = 'if0_43224570';           
-    $pass   = 'ZqhKzNyI10w';
-    $dbname = 'if0_43224570_parkvue_db';
+    // Detect if running locally on XAMPP or on InfinityFree
+    $serverName = $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $isLocal = ($serverName === 'localhost' || $serverName === '127.0.0.1' || in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']));
 
+    if ($isLocal) {
+        // Local XAMPP Configuration
+        $host   = '127.0.0.1';
+        $user   = 'root';
+        $pass   = '';
+        $dbname = 'parkvue_db';
 
-    // Connect to MySQL server and ensure database exists
-    $rootPdo = new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-    $rootPdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        // Ensure local database exists
+        try {
+            $rootPdo = new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass);
+            $rootPdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        } catch (Exception $e) {}
+    } else {
+        // InfinityFree Live Hosting Configuration
+        $host   = 'sql202.infinityfree.com';
+        $user   = 'if0_43224570';
+        $pass   = 'ZqhKzNyI10w';
+        $dbname = 'if0_43224570_parkvue_db';
+    }
 
-    // Connect to parkvue_db
+    // Connect directly to the specific database
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
 
@@ -36,6 +43,7 @@ function getDB(): PDO {
 }
 
 function initSchema(PDO $pdo): void {
+    // Only attempt table creation if tables don't exist yet
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS zones (
             code CHAR(1) PRIMARY KEY,

@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ParkVue Smart Parking Management System — Clean Stylesheet
-   Minimal, Modern, and Clear styling for College Project
+   ParkVue Smart Parking Management System — Responsive Stylesheet
+   Fully Responsive (Mobile, Tablet, Desktop) & Clean for College Report
    ========================================================================== */
 
 :root {
@@ -26,7 +26,18 @@
   --font-mono: "Consolas", "Courier New", monospace;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-main);
   background: var(--bg-page);
@@ -48,6 +59,7 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 16px;
+  width: 100%;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-icon {
@@ -61,11 +73,12 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 6px;
+  flex-shrink: 0;
 }
 .brand-title { font-size: 16px; font-weight: 700; }
 .brand-sub { font-size: 12px; color: var(--text-muted); }
 
-.header-actions { display: flex; align-items: center; gap: 12px; }
+.header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .header-info { text-align: right; font-size: 12px; color: var(--text-muted); }
 .header-info strong { color: var(--text); display: block; font-size: 13px; }
 .live-clock { font-family: var(--font-mono); color: var(--success); font-weight: 600; }
@@ -73,18 +86,20 @@ body {
 /* ── Metrics Cards ── */
 .metrics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
+  width: 100%;
 }
 .metric-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px 16px;
+  min-width: 0;
 }
 .metric-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.metric-value { font-size: 24px; font-weight: 700; font-family: var(--font-mono); margin-top: 4px; }
+.metric-value { font-size: 22px; font-weight: 700; font-family: var(--font-mono); margin-top: 4px; word-break: break-word; }
 .metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
 /* ── Main Layout: 2 Columns ── */
@@ -92,9 +107,12 @@ body {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
   gap: 16px;
+  width: 100%;
+  min-width: 0;
 }
-@media (max-width: 960px) {
-  .main-grid { grid-template-columns: 1fr; }
+.column-ops, .column-data {
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* ── Panels / Cards ── */
@@ -104,11 +122,15 @@ body {
   border-radius: var(--radius);
   padding: 18px;
   margin-bottom: 16px;
+  width: 100%;
+  min-width: 0;
 }
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 14px;
   border-bottom: 1px solid var(--border);
   padding-bottom: 10px;
@@ -116,7 +138,7 @@ body {
 .panel-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
 /* ── Forms, Inputs & Selectors ── */
-.form-group { margin-bottom: 12px; }
+.form-group { margin-bottom: 12px; width: 100%; }
 .form-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
 .input-text {
   width: 100%;
@@ -128,15 +150,26 @@ body {
   font-size: 14px;
   font-family: inherit;
   outline: none;
+  min-width: 0;
 }
 .input-text:focus { border-color: var(--border-focus); }
 .input-mono { font-family: var(--font-mono); font-weight: 600; text-transform: uppercase; }
 
-.btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.search-box {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.search-box .input-text { flex: 1; min-width: 0; }
+
+.btn-group {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+}
 .btn-select {
-  flex: 1;
-  min-width: 75px;
-  padding: 8px 10px;
+  padding: 8px 6px;
   background: var(--bg-input);
   border: 1px solid var(--border);
   color: var(--text-muted);
@@ -146,6 +179,10 @@ body {
   font-weight: 500;
   text-align: center;
   transition: all 0.15s;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .btn-select:hover { border-color: var(--text-muted); color: var(--text); }
 .btn-select.active { background: var(--primary); border-color: var(--primary); color: #fff; }
@@ -163,6 +200,7 @@ body {
   justify-content: center;
   gap: 6px;
   transition: background 0.15s;
+  white-space: nowrap;
 }
 .btn-primary { background: var(--primary); color: #fff; width: 100%; }
 .btn-primary:hover { background: var(--primary-hover); }
@@ -180,10 +218,13 @@ body {
   padding: 14px;
   margin-top: 14px;
   display: none;
+  width: 100%;
+  min-width: 0;
 }
 .ticket-slip.show { display: block; animation: fadeIn 0.2s ease-in; }
-.ticket-slip-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
-.ticket-barcode { font-family: var(--font-mono); text-align: center; letter-spacing: 4px; padding: 8px 0; font-size: 16px; color: var(--text-muted); }
+.ticket-slip-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; flex-wrap: wrap; gap: 4px; }
+#pass-barcode { width: 100%; max-width: 100%; overflow: hidden; margin: 10px 0; text-align: center; }
+#pass-barcode svg { max-width: 100%; width: 100%; height: auto; }
 
 /* ── Barrier Status Box ── */
 .gate-banner {
@@ -198,23 +239,23 @@ body {
   background: var(--bg-input);
   border: 1px solid var(--border);
 }
-.gate-banner.open { background: var(--success-bg); border-color: var(--success); color: var(--success); }
-.gate-banner.closed { color: var(--text-muted); }
 
 /* ── Parking Bay Grid ── */
 .bay-filter { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .bay-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
   gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 .bay-slot {
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 10px 8px;
+  padding: 8px 6px;
   text-align: center;
-  transition: transform 0.15s, border-color 0.15s;
+  min-width: 0;
 }
 .bay-slot.free { border-color: var(--success); }
 .bay-slot.free .bay-status { color: var(--success); }
@@ -222,14 +263,20 @@ body {
 .bay-slot.occupied .bay-status { color: var(--danger); }
 .bay-slot.charging { border-color: var(--info); }
 .bay-slot.charging .bay-status { color: var(--info); }
-.bay-id { font-weight: 700; font-size: 14px; font-family: var(--font-mono); }
-.bay-status { font-size: 11px; font-weight: 600; margin: 2px 0; text-transform: uppercase; }
+.bay-id { font-weight: 700; font-size: 13px; font-family: var(--font-mono); }
+.bay-status { font-size: 10px; font-weight: 600; margin: 2px 0; text-transform: uppercase; }
 .bay-plate { font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ── Transactions Table ── */
-.table-wrap { overflow-x: auto; }
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .data-table {
   width: 100%;
+  min-width: 460px;
   border-collapse: collapse;
   font-size: 13px;
   text-align: left;
@@ -241,10 +288,12 @@ body {
   font-size: 11px;
   text-transform: uppercase;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 .data-table td {
   padding: 8px 10px;
   border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+  white-space: nowrap;
 }
 .badge {
   display: inline-block;
@@ -263,30 +312,40 @@ body {
   background: rgba(0, 0, 0, 0.65);
   display: none; align-items: center; justify-content: center;
   z-index: 1000;
+  padding: 16px;
 }
 .modal-overlay.open { display: flex; }
 .modal-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  width: 90%; max-width: 480px;
+  width: 100%; max-width: 440px;
   padding: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .modal-close { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
 
 /* ── Toast Notifications ── */
-#toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+#toast-container {
+  position: fixed; bottom: 16px; right: 16px; left: 16px;
+  z-index: 2000; display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+  align-items: flex-end;
+}
 .toast {
   background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 6px;
   font-size: 13px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   display: flex; align-items: center; gap: 8px;
   animation: slideIn 0.2s ease;
+  pointer-events: auto;
+  max-width: 100%;
 }
 .toast.success { border-left: 4px solid var(--success); }
 .toast.error { border-left: 4px solid var(--danger); }
@@ -294,3 +353,73 @@ body {
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* Tablets & Small Laptops (<= 960px) */
+@media (max-width: 960px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile Screens (<= 640px) */
+@media (max-width: 640px) {
+  body {
+    padding: 10px 8px;
+  }
+  .app-header {
+    padding: 12px;
+    gap: 10px;
+  }
+  .brand-title {
+    font-size: 15px;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .header-info {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  
+  /* 2x2 Clean Grid for Top Metrics on Mobile */
+  .metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .metric-card {
+    padding: 10px 12px;
+  }
+  .metric-value {
+    font-size: 18px;
+  }
+
+  .panel {
+    padding: 14px 12px;
+  }
+
+  /* 2x2 Thumb-friendly Grid for Category and Tender buttons */
+  .btn-group {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .btn-select {
+    padding: 9px 8px;
+    font-size: 12px;
+  }
+
+  .bay-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 6px;
+  }
+
+  #toast-container {
+    left: 10px; right: 10px; bottom: 10px;
+    align-items: stretch;
+  }
+  .toast { width: 100%; }
+}

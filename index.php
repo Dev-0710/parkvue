@@ -116,9 +116,9 @@ $badge      = 'B';
 
         <div class="form-group">
           <label class="form-label" for="exit-ticket-input">Scan Ticket ID or Enter Vehicle Plate</label>
-          <div style="display:flex;gap:8px;">
+          <div class="search-box">
             <input type="text" id="exit-ticket-input" class="input-text input-mono" placeholder="e.g. TKT-7402 or CA 7XYZ89">
-            <button class="btn btn-outline" id="btn-fetch-ticket" style="white-space:nowrap;">🔍 Search</button>
+            <button class="btn btn-outline" id="btn-fetch-ticket">🔍 Search</button>
           </div>
         </div>
 

@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+require_once __DIR__ . '/db.php';
+$pdo = getDB();
+
 $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 $ticket_id   = strtoupper(trim($input['ticket_id'] ?? ''));
 $tender_type = ucfirst(trim($input['tender_type'] ?? 'Cash'));
@@ -23,60 +26,30 @@ if (empty($ticket_id)) {
     exit;
 }
 
-$bays_file   = __DIR__ . '/../assets/data/bays.json';
-$ledger_file = __DIR__ . '/../assets/data/ledger.json';
-$bays   = json_decode(file_get_contents($bays_file), true);
-$ledger = json_decode(file_get_contents($ledger_file), true);
+// Find bay by ticket
+$stmt = $pdo->prepare("SELECT * FROM bays WHERE ticket = ? LIMIT 1");
+$stmt->execute([$ticket_id]);
+$bay = $stmt->fetch();
 
-$found_bay  = null;
-$found_zone = null;
+if ($bay) {
+    $plate = $bay['plate'];
+    $bay_id = $bay['id'];
 
-foreach ($bays['zones'] as &$zone) {
-    foreach ($zone['bays'] as &$bay) {
-        if (strtoupper((string)($bay['ticket'] ?? '')) === $ticket_id) {
-            $found_bay  = &$bay;
-            $found_zone = &$zone;
-            break 2;
-        }
-    }
-}
+    // Free up bay in MySQL
+    $upd = $pdo->prepare("UPDATE bays SET status = 'free', plate = NULL, ticket = NULL, checkin = NULL, dwell = NULL WHERE ticket = ?");
+    $upd->execute([$ticket_id]);
 
-if ($found_bay) {
-    $plate = $found_bay['plate'];
-    $bay_id = $found_bay['id'];
+    // Record completed transaction
+    $txn = $pdo->prepare("INSERT INTO transactions (ticket, plate, zone_bay, event_type, tender, amount, status) VALUES (?, ?, ?, 'FEE_SETTLED', ?, ?, 'COMPLETED')");
+    $txn->execute([$ticket_id, $plate, $bay_id, $tender_type, $total_due]);
 
-    // Free bay
-    $found_bay['status']   = 'free';
-    $found_bay['plate']    = null;
-    $found_bay['ticket']   = null;
-    $found_bay['checkin']  = null;
-    $found_bay['dwell']    = null;
-    $found_zone['occupied'] = max(0, (int)$found_zone['occupied'] - 1);
-    $found_zone['free']     = (int)$found_zone['capacity'] - (int)$found_zone['occupied'];
-
-    // Update transactions & ledger
-    $now_iso = gmdate('c');
-    if (!isset($ledger['transactions'])) $ledger['transactions'] = [];
-    array_unshift($ledger['transactions'], [
-        'timestamp'  => $now_iso,
-        'event_type' => 'FEE_SETTLED',
-        'plate'      => $plate,
-        'zone_bay'   => $bay_id,
-        'ticket'     => $ticket_id,
-        'tender'     => $tender_type,
-        'amount'     => $total_due,
-        'status'     => 'COMPLETED'
-    ]);
-    $ledger['recent_transactions'] = $ledger['transactions'];
-
+    // Update revenue metrics
     if (strtolower($tender_type) === 'cash') {
-        $ledger['metrics']['cash_in_drawer'] = (float)($ledger['metrics']['cash_in_drawer'] ?? 0) + $total_due;
+        $pStmt = $pdo->prepare("UPDATE shift_metrics SET cash_in_drawer = cash_in_drawer + ? WHERE id = 1");
     } else {
-        $ledger['metrics']['digital_fastag_total'] = (float)($ledger['metrics']['digital_fastag_total'] ?? 0) + $total_due;
+        $pStmt = $pdo->prepare("UPDATE shift_metrics SET digital_fastag_total = digital_fastag_total + ? WHERE id = 1");
     }
-
-    file_put_contents($bays_file, json_encode($bays, JSON_PRETTY_PRINT));
-    file_put_contents($ledger_file, json_encode($ledger, JSON_PRETTY_PRINT));
+    $pStmt->execute([$total_due]);
 }
 
 echo json_encode([

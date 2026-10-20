@@ -14,21 +14,18 @@ if (empty($query)) {
     exit;
 }
 
-$bays_file = __DIR__ . '/../assets/data/bays.json';
-$bays = json_decode(file_get_contents($bays_file), true);
+require_once __DIR__ . '/db.php';
+$pdo = getDB();
 
-$found = null;
-foreach ($bays['zones'] as $zone) {
-    foreach ($zone['bays'] as $bay) {
-        if ($bay['status'] !== 'free' && (
-            strtoupper((string)($bay['ticket'] ?? '')) === $query ||
-            strtoupper((string)($bay['plate'] ?? '')) === $query
-        )) {
-            $found = $bay;
-            break 2;
-        }
-    }
-}
+$stmt = $pdo->prepare("
+    SELECT b.*, z.hourly_rate 
+    FROM bays b 
+    JOIN zones z ON b.zone_code = z.code 
+    WHERE (UPPER(b.ticket) = ? OR UPPER(b.plate) = ?) AND b.status != 'free' 
+    LIMIT 1
+");
+$stmt->execute([$query, $query]);
+$found = $stmt->fetch();
 
 if (!$found) {
     http_response_code(404);
@@ -36,10 +33,9 @@ if (!$found) {
     exit;
 }
 
-$tariffs = ['2-wheeler' => 20, 'sedan' => 40, 'suv' => 50, 'ev' => 60, 'valet' => 80];
 $checkin_ts = !empty($found['checkin']) ? strtotime($found['checkin']) : time() - 3600;
 $hours = max(1, (int)ceil((time() - $checkin_ts) / 3600));
-$rate = $tariffs[strtolower($found['category'] ?? 'sedan')] ?? 40;
+$rate = (float)($found['hourly_rate'] ?? 40.0);
 $total_due = $hours * $rate;
 
 echo json_encode([

@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+require_once __DIR__ . '/db.php';
+$pdo = getDB();
+
 $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 $plate = strtoupper(trim($input['vehicle_plate'] ?? $input['plate'] ?? ''));
 $category = trim($input['classification'] ?? $input['category'] ?? 'Sedan');
@@ -23,66 +26,39 @@ if (empty($plate)) {
     exit;
 }
 
-$bays_file   = __DIR__ . '/../assets/data/bays.json';
-$ledger_file = __DIR__ . '/../assets/data/ledger.json';
-$bays   = json_decode(file_get_contents($bays_file), true);
-$ledger = json_decode(file_get_contents($ledger_file), true);
-
-// Select zone based on vehicle type
-$zone_key = 'B';
+// Select zone
+$zone_code = 'B';
 $cat_lower = strtolower($category);
-if ($is_valet) $zone_key = 'V';
-elseif (str_contains($cat_lower, '2-wheeler')) $zone_key = 'A';
-elseif (str_contains($cat_lower, 'ev')) $zone_key = 'C';
+if ($is_valet) $zone_code = 'V';
+elseif (str_contains($cat_lower, '2-wheeler')) $zone_code = 'A';
+elseif (str_contains($cat_lower, 'ev')) $zone_code = 'C';
 
-// Find vacant bay in zone
-$bay_idx = null;
-foreach ($bays['zones'][$zone_key]['bays'] as $i => $b) {
-    if (in_array(strtolower($b['status']), ['free', 'vacant'], true)) {
-        $bay_idx = $i;
-        break;
-    }
-}
+// Find vacant bay
+$bayStmt = $pdo->prepare("SELECT id FROM bays WHERE zone_code = ? AND status = 'free' LIMIT 1");
+$bayStmt->execute([$zone_code]);
+$bay = $bayStmt->fetch();
 
-if ($bay_idx === null) {
+if (!$bay) {
     http_response_code(409);
-    echo json_encode(['status' => 'error', 'message' => "Zone {$zone_key} is full"]);
+    echo json_encode(['status' => 'error', 'message' => "Zone {$zone_code} is currently full"]);
     exit;
 }
 
+$bay_id = $bay['id'];
 $ticket_id = 'TKT-' . rand(7410, 9999);
-$now_iso   = gmdate('c');
-$bay_ref   = &$bays['zones'][$zone_key]['bays'][$bay_idx];
-$bay_id    = $bay_ref['id'];
+$new_status = ($zone_code === 'C') ? 'charging' : 'occupied';
+$now_iso = gmdate('c');
 
-// Assign bay
-$bay_ref['status']   = ($zone_key === 'C') ? 'charging' : 'occupied';
-$bay_ref['plate']    = $plate;
-$bay_ref['category'] = $category;
-$bay_ref['checkin']  = $now_iso;
-$bay_ref['ticket']   = $ticket_id;
-$bay_ref['dwell']    = 'Just now';
+// Allocate bay in MySQL
+$upd = $pdo->prepare("UPDATE bays SET status = ?, plate = ?, category = ?, ticket = ?, checkin = NOW(), dwell = 'Just now' WHERE id = ?");
+$upd->execute([$new_status, $plate, $category, $ticket_id, $bay_id]);
 
-$bays['zones'][$zone_key]['occupied'] = min((int)$bays['zones'][$zone_key]['capacity'], (int)$bays['zones'][$zone_key]['occupied'] + 1);
-$bays['zones'][$zone_key]['free']     = max(0, (int)$bays['zones'][$zone_key]['capacity'] - (int)$bays['zones'][$zone_key]['occupied']);
+// Log transaction in MySQL
+$txn = $pdo->prepare("INSERT INTO transactions (ticket, plate, zone_bay, event_type, tender, amount, status) VALUES (?, ?, ?, 'ENTRY_CHECKIN', 'Pass Issued', 0, 'COMPLETED')");
+$txn->execute([$ticket_id, $plate, $bay_id]);
 
-// Log in ledger
-if (!isset($ledger['transactions'])) $ledger['transactions'] = [];
-array_unshift($ledger['transactions'], [
-    'timestamp'  => $now_iso,
-    'event_type' => 'ENTRY_CHECKIN',
-    'plate'      => $plate,
-    'zone_bay'   => $bay_id,
-    'ticket'     => $ticket_id,
-    'tender'     => 'Pass Issued',
-    'amount'     => 0.00,
-    'status'     => 'COMPLETED'
-]);
-$ledger['recent_transactions'] = $ledger['transactions'];
-$ledger['metrics']['vehicles_processed'] = (int)($ledger['metrics']['vehicles_processed'] ?? 0) + 1;
-
-file_put_contents($bays_file, json_encode($bays, JSON_PRETTY_PRINT));
-file_put_contents($ledger_file, json_encode($ledger, JSON_PRETTY_PRINT));
+// Update shift metrics
+$pdo->exec("UPDATE shift_metrics SET vehicles_processed = vehicles_processed + 1 WHERE id = 1");
 
 echo json_encode([
     'status' => 'success',
